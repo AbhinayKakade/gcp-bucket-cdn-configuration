@@ -12,6 +12,3 @@ provider "google-beta" {
   project     = var.gcp_project_id
 }
  
-locals {
-  cdn_domain = "exampledomain.com" # Change this to your domain. You’ll be able to access CDN on this hostname.
-}

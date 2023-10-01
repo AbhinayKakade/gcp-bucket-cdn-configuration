@@ -34,31 +34,6 @@ resource "google_compute_url_map" "cdn_url_map" {
 }
 
 # ------------------------------------------------------------------------------
-# CREATE A GOOGLE COMPUTE MANAGED CERTIFICATE
-# ------------------------------------------------------------------------------
-resource "google_compute_managed_ssl_certificate" "cdn_certificate" {
-  provider = google-beta
-  project  = var.gcp_project_id
- 
-  name = "cdn-managed-certificate"
- 
-  managed {
-    domains = [local.cdn_domain]
-  }
-}
- 
-# ------------------------------------------------------------------------------
-# CREATE HTTPS PROXY
-# ------------------------------------------------------------------------------
- 
-resource "google_compute_target_https_proxy" "cdn_https_proxy" {
-  name             = "cdn-https-proxy"
-  url_map          = google_compute_url_map.cdn_url_map.self_link
-  ssl_certificates = [google_compute_managed_ssl_certificate.cdn_certificate.self_link]
-  project          = var.gcp_project_id
-}
-
-# ------------------------------------------------------------------------------
 # CREATE A GLOBAL PUBLIC IP ADDRESS
 # ------------------------------------------------------------------------------
  
@@ -69,31 +44,6 @@ resource "google_compute_global_address" "cdn_public_address" {
   project      = var.gcp_project_id
 }
  
-# ------------------------------------------------------------------------------
-# CREATE A GLOBAL FORWARDING RULE
-# ------------------------------------------------------------------------------
- 
-resource "google_compute_global_forwarding_rule" "cdn_global_forwarding_rule" {
-  name       = "poc-test-cdn-global-forwarding-https-rule"
-  target     = google_compute_target_https_proxy.cdn_https_proxy.self_link
-  ip_address = google_compute_global_address.cdn_public_address.address
-  port_range = "443"
-  project    = var.gcp_project_id
-}
-
-# ------------------------------------------------------------------------------
-# CREATE DNS RECORD
-# ------------------------------------------------------------------------------
- 
-# resource "google_dns_record_set" "cdn_dns_a_record" {
-#   managed_zone = var.managed_zone # Name of your managed DNS zone
-#   name         = "${local.cdn_domain}."
-#   type         = "A"
-#   ttl          = 3600 # 1 hour
-#   rrdatas      = [google_compute_global_address.cdn_public_address.address]
-#   project      = "poc-test-poc"
-# }
-
 # ------------------------------------------------------------------------------
 # MAKE THE BUCKET PUBLIC
 # ------------------------------------------------------------------------------
