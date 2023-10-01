@@ -2,14 +2,14 @@ provider "google" {
   credentials = file("./key.json")
   version     = "3.5.0"
   region      = "us-central1"
-  project     = "poc-test-poc"
+  project     = var.gcp_project_id
 }
  
 provider "google-beta" {
   credentials = file("./key.json")
   version     = "3.5.0"
-  region      = "us-central1"
-  project     = "poc-test-poc"
+  region      = var.gcp_region
+  project     = var.gcp_project_id
 }
  
 locals {
